@@ -1,0 +1,4 @@
+#!/bin/bash
+cat utils.swift $1 > tmp.swift
+swift tmp.swift ${@:2:($#)}
+rm tmp.swift
