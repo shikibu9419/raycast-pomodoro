@@ -1,6 +1,11 @@
-import { Client, Project, Tag, TimeEntry, Workspace } from "./types";
-import { getPreferenceValues } from "@raycast/api";
 import { authenticatedFetch } from "./auth";
+import { Client, Project, Tag, TimeEntry, Workspace } from "./types";
+
+import { preferences } from "../preferences";
+
+export interface CreateTimeEntryParams extends Pick<TimeEntry, "description" | "tags" | "billable"> {
+  projectId?: number;
+}
 
 const TogglAPI = function (apiToken: string) {
   const baseUrl = "https://api.track.toggl.com/api/v8";
@@ -30,17 +35,7 @@ const TogglAPI = function (apiToken: string) {
       });
       return projects;
     },
-    createTimeEntry: ({
-      projectId,
-      description,
-      tags,
-      billable,
-    }: {
-      projectId?: number;
-      description: string;
-      tags: string[];
-      billable: boolean;
-    }) => {
+    createTimeEntry: ({ projectId, description, tags, billable }: CreateTimeEntryParams) => {
       return api.post<{ data: TimeEntry }>(`/time_entries/start`, {
         time_entry: {
           description,
@@ -72,11 +67,6 @@ const TogglAPI = function (apiToken: string) {
   };
 };
 
-interface Preferences {
-  togglApiToken: string;
-}
-
-const preferences: Preferences = getPreferenceValues();
 const toggl = TogglAPI(preferences.togglApiToken);
 
 export default toggl;

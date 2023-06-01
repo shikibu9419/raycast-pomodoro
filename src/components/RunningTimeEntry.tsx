@@ -17,10 +17,10 @@ function RunningTimeEntry({ runningTimeEntry }: { runningTimeEntry: TimeEntry })
     try {
       await toggl.stopTimeEntry({ id: runningTimeEntry.id });
       await storage.runningTimeEntry.refresh();
-      const runningTaskId = await LocalStorage.getItem<string>('runningTaskId')
+      const runningTaskId = await LocalStorage.getItem<string>("runningTaskId");
       if (runningTaskId) {
-        await updateReminder(runningTaskId, { completed: true })
-        LocalStorage.removeItem('runningTaskId')
+        await updateReminder(runningTaskId, { completed: true });
+        LocalStorage.removeItem("runningTaskId");
       }
       await showToast(Toast.Style.Success, `Stopped time entry`);
     } catch (e) {
