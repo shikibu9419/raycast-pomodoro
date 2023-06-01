@@ -13,4 +13,4 @@ export interface Reminder {
   priority: number;
 }
 
-export type ReminderParams = Pick<Reminder, "title" | "notes" | "dueDate" | "priority">;
+export type ReminderParams = Partial<Pick<Reminder, "title" | "notes" | "dueDate" | "priority" | "completed">>;

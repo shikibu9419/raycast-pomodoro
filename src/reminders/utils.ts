@@ -16,7 +16,7 @@ type ReminderCommand =
 export async function execCommand<T>(command: ReminderCommand, args: string[] = []): Promise<T> {
   // TODO: change
   // const { stdout } = await execa(join(environment.supportPath, command), args);
-  const { stdout } = await execa(join("Users/shikibu/.config/raycast/bin", command), args);
+  const { stdout } = await execa(join("/Users/shikibu/.config/raycast/bin", command), args);
 
   return JSON.parse(stdout);
 }
@@ -29,9 +29,6 @@ export const dateToString = (date: Date): string => date.toISOString().slice(0, 
  */
 export const parseReminderDate = (reminder: Reminder): Reminder => ({
   ...reminder,
-  completionDate: new Date(reminder.completionDate),
-  creationDate: new Date(reminder.creationDate),
-  dueDate: new Date(reminder.dueDate),
-  modificationDate: new Date(reminder.modificationDate),
-  remindMeDate: new Date(reminder.remindMeDate),
+  creationDate: reminder.creationDate && new Date(reminder.creationDate),
+  dueDate: reminder.dueDate && new Date(reminder.dueDate),
 });

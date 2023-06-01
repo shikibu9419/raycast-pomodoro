@@ -15,7 +15,7 @@ export async function getReminderLists(): Promise<ReminderList[]> {
 }
 
 export async function getReminders(listName: string): Promise<Reminder[]> {
-  const res = await execCommand<Response<Reminder[]>>("getReminders", [listName, "true"]);
+  const res = await execCommand<Response<Reminder[]>>("getReminders", [listName, "false"]);
 
   if (res.error) throw new Error(res.error);
 
@@ -23,13 +23,7 @@ export async function getReminders(listName: string): Promise<Reminder[]> {
 }
 
 export function updateReminder(id: string, params: ReminderParams): Promise<Response> {
-  return execCommand<Response>("updateReminder", [
-    id,
-    params.title,
-    params.notes,
-    dateToString(params.dueDate),
-    params.priority.toString(),
-  ]);
+  return execCommand<Response>("updateReminder", [id, JSON.stringify(params)]);
 }
 
 export function deleteReminder(id: string): Promise<Response> {
@@ -39,9 +33,9 @@ export function deleteReminder(id: string): Promise<Response> {
 export function createReminder(listName: string, params: ReminderParams): Promise<Response> {
   return execCommand<Response>("createReminder", [
     listName,
-    params.title,
-    params.notes,
-    dateToString(params.dueDate),
-    params.priority.toString(),
+    params.title || "",
+    params.notes || "",
+    params.dueDate ? dateToString(params.dueDate) : "",
+    params.priority?.toString() || "0",
   ]);
 }
