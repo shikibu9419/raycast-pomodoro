@@ -1,2 +1,8 @@
 #!/bin/bash
-cat utils.swift $1 | swiftc - -o ../bin/${1%.*}
+for f in $(ls *.swift); do
+    if [ $f != "utils.swift" ]; then
+        binfile=${f%.*}
+        cat utils.swift $f | swiftc - -O -o ../bin/$binfile
+        echo "Compiled $f to ../bin/$binfile"
+    fi
+done

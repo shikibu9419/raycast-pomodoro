@@ -63,7 +63,7 @@ func getReminders(in listName: String, from eventStore: EKEventStore, completed:
                 "title": reminder.title ?? "",
                 "notes": reminder.notes ?? "",
                 "id": reminder.calendarItemIdentifier,
-                "completed": reminder.isCompleted ? "yes" : "no",
+                "completed": reminder.isCompleted,
                 "creationDate": creationDateString,
                 "dueDate": dueDateString,
                 "priority": reminder.priority
