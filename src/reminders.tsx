@@ -1,18 +1,20 @@
-import { Suspense, useCallback, useMemo } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { Action, ActionPanel, Color, Icon, List, Toast, clearSearchBar, showToast } from "@raycast/api";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 
 import { AppContextProvider, useAppContext } from "./context";
-import { getReminders } from "./reminders/api";
+import { createReminder, getReminders } from "./reminders/api";
 import { Reminder, ReminderList } from "./reminders/model";
 import CreateTimeEntryForm from "./components/CreateTimeEntryForm";
-import EmptyList from "./components/EmptyList";
+import EmptyTask from "./components/EmptyTask";
 import RunningTimeEntry from "./components/RunningTimeEntry";
 import { storage, refreshStorage } from "./storage";
 import toggl from "./toggl";
 import { TimeEntry } from "./toggl/types";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
+import { preferences } from "./preferences";
+import { useTimeEntry } from "./hooks/useTimeEntry";
 
 dayjs.extend(duration);
 
@@ -28,10 +30,7 @@ function TaskListItem({ task }: { task: Reminder }) {
       key={task.id}
       title={task.title}
       icon={{ source: Icon.Circle, tintColor: Color.Orange }}
-      accessories={[
-        { text: task.notes },
-        ...(task.dueDate ? [{ date: task.dueDate }] : []),
-      ]}
+      accessories={[{ text: task.notes }, ...(task.dueDate ? [{ date: task.dueDate }] : [])]}
       actions={
         <ActionPanel>
           <Action.Push
@@ -71,71 +70,65 @@ function TaskListSection({ tasks }: { tasks: Reminder[] }) {
 
 function ReminderList() {
   const { isLoading, isValidToken, projectGroups, runningTimeEntry, timeEntries, projects } = useAppContext();
+  const [inputText, setInputText] = useState("");
+  const { createTimeEntry } = useTimeEntry();
 
-  async function resumeTimeEntry(timeEntry: TimeEntry) {
-    await showToast(Toast.Style.Animated, "Starting timer...");
-    try {
-      await toggl.createTimeEntry({
-        projectId: timeEntry.pid,
-        description: timeEntry.description,
-        tags: timeEntry.tags,
-        billable: timeEntry.billable,
-      });
-      await storage.runningTimeEntry.refresh();
-      await showToast(Toast.Style.Success, "Time entry resumed");
-      await clearSearchBar({ forceScrollToTop: true });
-    } catch (e) {
-      await showToast(Toast.Style.Failure, "Failed to resume time entry");
-    }
-  }
+  const handleInputTextChange = useCallback((value: string) => {
+    setInputText(value);
+  }, []);
+  const getRemindersWrapper = useCallback(() => getReminders(preferences.defaultListName), []);
 
-  const getRemindersWrapper = useCallback(() => getReminders("リマインダー"), []);
+  const createTask = useCallback(async (listName: string, title: string, tracked: boolean) => {
+    const { data } = await createReminder(listName, { title, dueDate: new Date() });
+    if (tracked) createTimeEntry(title, data.id);
+
+    await showToast(Toast.Style.Success, "Task created!");
+  }, []);
 
   const { data } = useQuery<Reminder[]>(["reminders"], getRemindersWrapper);
 
   return (
-    <List isLoading={isLoading}>
-        {isValidToken ? (
-          !isLoading && runningTimeEntry && (
-              <RunningTimeEntry runningTimeEntry={runningTimeEntry} />
-          )
-        ) : (
-          <List.Item
-            icon={Icon.ExclamationMark}
-            title="Invalid API Key Detected"
-            accessories={[{ text: `Go to Extensions → Toggl Track` }]}
-          />
-        )}
+    <List isLoading={isLoading} searchText={inputText} onSearchTextChange={handleInputTextChange} enableFiltering>
+      {isValidToken ? (
+        !isLoading && runningTimeEntry && <RunningTimeEntry runningTimeEntry={runningTimeEntry} />
+      ) : (
+        <List.Item
+          icon={Icon.ExclamationMark}
+          title="Invalid API Key Detected"
+          accessories={[{ text: `Go to Extensions → Toggl Track` }]}
+        />
+      )}
       {data && <TaskListSection tasks={data} />}
-        {isValidToken && !isLoading && (
-      <List.Section title="Toggl">
-              <List.Item
-                title="Create a new time entry"
-                icon={"command-icon.png"}
-                actions={
-                  <ActionPanel>
-                    <Action.Push
-                      title="Create Time Entry"
-                      icon={{ source: Icon.Clock }}
-                      target={
-                        <AppContextProvider>
-                          <CreateTimeEntryForm />
-                        </AppContextProvider>
-                      }
-                    />
-                    <ActionPanel.Section>
-                      <Action.SubmitForm
-                        title="Refresh"
-                        icon={{ source: Icon.RotateClockwise }}
-                        shortcut={{ modifiers: ["cmd"], key: "r" }}
-                        onSubmit={refreshStorage}
-                      />
-                    </ActionPanel.Section>
-                  </ActionPanel>
-                }
-              />
-      </List.Section>
-        )}
+      {isValidToken && !isLoading && (
+        <List.Section title="Toggl">
+          <List.Item
+            title="Create a new time entry"
+            icon={"command-icon.png"}
+            actions={
+              <ActionPanel>
+                <Action.Push
+                  title="Create Time Entry"
+                  icon={{ source: Icon.Clock }}
+                  target={
+                    <AppContextProvider>
+                      <CreateTimeEntryForm />
+                    </AppContextProvider>
+                  }
+                />
+                <ActionPanel.Section>
+                  <Action.SubmitForm
+                    title="Refresh"
+                    icon={{ source: Icon.RotateClockwise }}
+                    shortcut={{ modifiers: ["cmd"], key: "r" }}
+                    onSubmit={refreshStorage}
+                  />
+                </ActionPanel.Section>
+              </ActionPanel>
+            }
+          />
+        </List.Section>
+      )}
+      <EmptyTask inputText={inputText} createTask={createTask} />
     </List>
   );
 }
@@ -144,7 +137,7 @@ export default function Command() {
   return (
     <AppContextProvider>
       <QueryClientProvider client={queryClient}>
-        <Suspense fallback={<EmptyList />}>
+        <Suspense fallback={<List isLoading />}>
           <ReminderList />
         </Suspense>
       </QueryClientProvider>

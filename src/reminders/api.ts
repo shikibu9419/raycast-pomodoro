@@ -30,8 +30,8 @@ export function deleteReminder(id: string): Promise<Response> {
   return execCommand<Response>("deleteReminder", [id]);
 }
 
-export function createReminder(listName: string, params: ReminderParams): Promise<Response> {
-  return execCommand<Response>("createReminder", [
+export function createReminder(listName: string, params: ReminderParams): Promise<Response<Reminder>> {
+  return execCommand<Response<Reminder>>("createReminder", [
     listName,
     params.title || "",
     params.notes || "",
