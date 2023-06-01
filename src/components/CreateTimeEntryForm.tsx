@@ -1,11 +1,11 @@
-import { useNavigation, Form, ActionPanel, Action, Icon, showToast, Toast, clearSearchBar } from "@raycast/api";
+import { useNavigation, Form, ActionPanel, Action, Icon, showToast, Toast, clearSearchBar, LocalStorage } from "@raycast/api";
 import toggl from "../toggl";
 import { storage } from "../storage";
 import { Project } from "../toggl/types";
 import { useAppContext } from "../context";
 import { useMemo, useState } from "react";
 
-function CreateTimeEntryForm({ project, description }: { project?: Project; description?: string }) {
+function CreateTimeEntryForm({ project, description, taskId }: { project?: Project; description?: string, taskId?: string }) {
   const navigation = useNavigation();
   const { projects, tags, isLoading, projectGroups } = useAppContext();
   const [selectedProject, setSelectedProject] = useState<Project | undefined>(project);
@@ -20,6 +20,7 @@ function CreateTimeEntryForm({ project, description }: { project?: Project; desc
         tags: selectedTags,
         billable,
       });
+      if (taskId) LocalStorage.setItem('runningTaskId', taskId)
       await showToast(Toast.Style.Animated, "Starting time entry...");
       await storage.runningTimeEntry.refresh();
       await showToast(Toast.Style.Success, "Started time entry");

@@ -1,10 +1,11 @@
-import { List, Icon, ActionPanel, Action, showToast, Toast } from "@raycast/api";
+import { List, Icon, ActionPanel, Action, showToast, Toast, LocalStorage } from "@raycast/api";
 import dayjs from "dayjs";
 import { TimeEntry } from "../toggl/types";
 import useCurrentTime from "../hooks/useCurrentTime";
 import { storage } from "../storage";
 import toggl from "../toggl";
 import { useAppContext } from "../context";
+import { updateReminder } from "../reminders/api";
 
 function RunningTimeEntry({ runningTimeEntry }: { runningTimeEntry: TimeEntry }) {
   const currentTime = useCurrentTime();
@@ -16,6 +17,11 @@ function RunningTimeEntry({ runningTimeEntry }: { runningTimeEntry: TimeEntry })
     try {
       await toggl.stopTimeEntry({ id: runningTimeEntry.id });
       await storage.runningTimeEntry.refresh();
+      const runningTaskId = await LocalStorage.getItem<string>('runningTaskId')
+      if (runningTaskId) {
+        await updateReminder(runningTaskId, { completed: true })
+        LocalStorage.removeItem('runningTaskId')
+      }
       await showToast(Toast.Style.Success, `Stopped time entry`);
     } catch (e) {
       await showToast(Toast.Style.Failure, "Failed to stop time entry");
