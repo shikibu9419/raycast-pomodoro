@@ -57,15 +57,13 @@ func getReminders(in listName: String, from eventStore: EKEventStore, completed:
         }
 
         let remindersDict = filteredReminders.compactMap { reminder -> [String: Any]? in
-            let dueDateString = stringFromDate(reminder.dueDateComponents?.date)
-            let creationDateString = stringFromDate(reminder.creationDate)
             return [
                 "title": reminder.title ?? "",
                 "notes": reminder.notes ?? "",
                 "id": reminder.calendarItemIdentifier,
                 "completed": reminder.isCompleted,
-                "creationDate": creationDateString,
-                "dueDate": dueDateString,
+                "creationDate": stringFromDate(reminder.creationDate),
+                "dueDate": stringFromDate(reminder.dueDateComponents?.date),
                 "priority": reminder.priority
             ]
         }

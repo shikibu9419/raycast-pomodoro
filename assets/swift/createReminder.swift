@@ -1,7 +1,7 @@
 import Foundation
 import EventKit
 
-func createReminder(in eventStore: EKEventStore, title: String, notes: String, dueDate: String, priority: Int, listName: String) {
+func createReminder(in eventStore: EKEventStore, listName: String, title: String, notes: String, dueDate: String, priority: Int) {
     guard let calendar = eventStore.calendars(for: .reminder).first(where: { $0.title == listName }) else {
         printError("List with name \(listName) not found.")
         return
@@ -24,7 +24,19 @@ func createReminder(in eventStore: EKEventStore, title: String, notes: String, d
 
     do {
         try eventStore.save(reminder, commit: true)
-        printOk()
+
+        let reminderDict: [String: Any] = [
+            "title": reminder.title ?? "",
+            "notes": reminder.notes ?? "",
+            "id": reminder.calendarItemIdentifier,
+            "completed": reminder.isCompleted,
+            "creationDate": stringFromDate(reminder.creationDate),
+            "dueDate": stringFromDate(reminder.dueDateComponents?.date),
+            "priority": reminder.priority
+        ]
+        let data = try JSONSerialization.data(withJSONObject: reminderDict)
+
+        printData(String(data: data, encoding: .utf8) ?? "")
     } catch let error {
         printError("Reminder failed with error \(error.localizedDescription)")
     }
@@ -34,14 +46,14 @@ func createReminder(in eventStore: EKEventStore, title: String, notes: String, d
 let args = CommandLine.arguments
 
 if args.count != 6 {
-    printError("Usage: ./<program> <title> <notes> <dueDate> <priority> <listName>")
+    printError("Usage: ./<program> <listName> <title> <notes> <dueDate> <priority>")
     exit(1)
 }
 
-let title = args[1]
-let notes = args[2]
-let dueDate = args[3]
-let priority = Int(args[4]) ?? 0
-let listName = args[5]
+let listName = args[1]
+let title = args[2]
+let notes = args[3]
+let dueDate = args[4]
+let priority = Int(args[5]) ?? 0
 
-createReminder(in: EKEventStore(), title: title, notes: notes, dueDate: dueDate, priority: priority, listName: listName)
+createReminder(in: EKEventStore(), listName: listName, title: title, notes: notes, dueDate: dueDate, priority: priority)
