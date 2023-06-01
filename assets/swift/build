@@ -1,8 +1,9 @@
 #!/bin/bash
 for f in $(ls *.swift); do
     if [ $f != "utils.swift" ]; then
+        echo "Compiling $f..."
         binfile=${f%.*}
-        cat utils.swift $f | swiftc - -O -o /Users/shikibu/.config/raycast/bin/$binfile
-        echo "Compiled $f to /Users/shikibu/.config/raycast/bin/$binfile"
+        cat utils.swift $f | swiftc - -O -o ../bin/$binfile
+        cp ../bin/$binfile /Users/shikibu/.config/raycast/bin/$binfile
     fi
 done
