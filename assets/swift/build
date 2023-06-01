@@ -2,7 +2,7 @@
 for f in $(ls *.swift); do
     if [ $f != "utils.swift" ]; then
         binfile=${f%.*}
-        cat utils.swift $f | swiftc - -O -o ../bin/$binfile
-        echo "Compiled $f to ../bin/$binfile"
+        cat utils.swift $f | swiftc - -O -o /Users/shikibu/.config/raycast/bin/$binfile
+        echo "Compiled $f to /Users/shikibu/.config/raycast/bin/$binfile"
     fi
 done
