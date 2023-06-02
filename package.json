@@ -38,17 +38,25 @@
       "title": "Reminder List Name",
       "placeholder": "Default list name to add",
       "description": "Default list name to add your tasks to"
+    },
+    {
+      "name": "browser",
+      "title": "Browser where YouTube Music opened.",
+      "description": "Script will control the YouTube Music tab in this browser.",
+      "type": "appPicker",
+      "default": "Chrome",
+      "required": true
     }
   ],
-  "keywords": [
-  ],
+  "keywords": [],
   "dependencies": {
     "@raycast/api": "^1.27.0",
     "@tanstack/react-query": "^4.29.12",
     "dayjs": "^1.10.7",
     "execa": "^7.1.1",
     "node-fetch": "^3.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "run-applescript": "^6.1.0"
   },
   "devDependencies": {
     "@types/node": "~17.0.10",
