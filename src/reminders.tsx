@@ -34,13 +34,13 @@ function RemindersList() {
     await showToast(Toast.Style.Success, "Task created!");
   }, []);
 
-  const { data } = useQuery<Reminder[]>(["reminders"], getRemindersWrapper);
+  const { data, refetch } = useQuery<Reminder[]>(["reminders"], getRemindersWrapper);
 
   return (
     <List isLoading={isLoading} searchText={inputText} onSearchTextChange={handleInputTextChange} enableFiltering>
       {!isValidToken && <InvalidTokenListItem />}
       {isValidToken && !isLoading && runningTimeEntry && <RunningTimeEntry runningTimeEntry={runningTimeEntry} />}
-      {data && <TaskListSection tasks={data} />}
+      {data && <TaskListSection tasks={data} onRefetch={refetch} />}
       {isValidToken && !isLoading && (
         <List.Section title="Toggl">
           <CreateTrackListItem />
