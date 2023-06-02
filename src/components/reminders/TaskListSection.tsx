@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { List, Icon, Color, ActionPanel, Action } from "@raycast/api";
 
-import CreateTimeEntryForm from "./CreateTimeEntryForm";
+import CreateTimeEntryForm from "../toggl/CreateTimeEntryForm";
 
-import { AppContextProvider } from "../context";
-import { Reminder } from "../reminders/model";
+import { AppContextProvider } from "../../context";
+import { Reminder } from "../../reminders/model";
 
 const isToday = (date: Date) => {
   const today = new Date();

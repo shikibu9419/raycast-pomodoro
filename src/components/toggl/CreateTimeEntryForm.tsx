@@ -9,12 +9,12 @@ import {
   clearSearchBar,
   LocalStorage,
 } from "@raycast/api";
-import toggl from "../toggl";
-import { storage } from "../storage";
-import { Project } from "../toggl/types";
-import { useAppContext } from "../context";
+import toggl from "../../toggl";
+import { storage } from "../../storage";
+import { Project } from "../../toggl/types";
+import { useAppContext } from "../../context";
 import { useMemo, useState } from "react";
-import { play } from "../youtubemusic";
+import { play } from "../../youtubemusic";
 
 function CreateTimeEntryForm({
   project,

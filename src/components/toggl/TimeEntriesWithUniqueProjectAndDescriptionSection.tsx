@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { List, Icon, ActionPanel, Action, Toast, clearSearchBar, showToast } from "@raycast/api";
 
-import { useAppContext } from "../context";
-import { refreshStorage, storage } from "../storage";
-import toggl from "../toggl";
-import { TimeEntry } from "../toggl/types";
+import { useAppContext } from "../../context";
+import { refreshStorage, storage } from "../../storage";
+import toggl from "../../toggl";
+import { TimeEntry } from "../../toggl/types";
 
 export default function TimeEntriesWithUniqueProjectAndDescriptionSection() {
   const { timeEntries, projects } = useAppContext();

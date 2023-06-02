@@ -1,6 +1,6 @@
 import { Action, ActionPanel, List } from "@raycast/api";
 
-import { preferences } from "../preferences";
+import { preferences } from "../../preferences";
 
 export type PropTypes = {
   inputText: string;

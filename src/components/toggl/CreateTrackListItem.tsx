@@ -2,8 +2,8 @@ import { List, Icon, ActionPanel, Action } from "@raycast/api";
 
 import CreateTimeEntryForm from "./CreateTimeEntryForm";
 
-import { AppContextProvider } from "../context";
-import { refreshStorage } from "../storage";
+import { AppContextProvider } from "../../context";
+import { refreshStorage } from "../../storage";
 
 export default function CreateTrackListItem() {
   return (

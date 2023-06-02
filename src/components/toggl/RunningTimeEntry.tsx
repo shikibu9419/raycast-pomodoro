@@ -1,12 +1,12 @@
 import { List, Icon, ActionPanel, Action, showToast, Toast, LocalStorage } from "@raycast/api";
 import dayjs from "dayjs";
-import { TimeEntry } from "../toggl/types";
-import useCurrentTime from "../hooks/useCurrentTime";
-import { storage } from "../storage";
-import toggl from "../toggl";
-import { useAppContext } from "../context";
-import { updateReminder } from "../reminders/api";
-import { pause } from "../youtubemusic";
+import { TimeEntry } from "../../toggl/types";
+import useCurrentTime from "../../hooks/useCurrentTime";
+import { storage } from "../../storage";
+import toggl from "../../toggl";
+import { useAppContext } from "../../context";
+import { updateReminder } from "../../reminders/api";
+import { pause } from "../../youtubemusic";
 
 function RunningTimeEntry({ runningTimeEntry }: { runningTimeEntry: TimeEntry }) {
   const currentTime = useCurrentTime();

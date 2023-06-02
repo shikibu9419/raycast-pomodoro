@@ -1,15 +1,11 @@
 import { Suspense, useCallback, useState } from "react";
 import { List, Toast, showToast } from "@raycast/api";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
-
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 
-import CreateTrackListItem from "./components/CreateTrackListItem";
-import EmptyTask from "./components/EmptyTask";
-import RunningTimeEntry from "./components/RunningTimeEntry";
-import TaskListSection from "./components/TaskListSection";
-import InvalidTokenListItem from "./components/InvalidTokenListItem";
+import { EmptyTask, TaskListSection } from "./components/reminders";
+import { InvalidTokenListItem, RunningTimeEntry, CreateTrackListItem } from "./components/toggl";
 
 import { AppContextProvider, useAppContext } from "./context";
 import { useTimeEntry } from "./hooks/useTimeEntry";

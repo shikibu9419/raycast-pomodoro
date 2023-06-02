@@ -3,11 +3,14 @@ import { List } from "@raycast/api";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 
-import RunningTimeEntry from "./components/RunningTimeEntry";
-import CreateTrackListItem from "./components/CreateTrackListItem";
-import InvalidTokenListItem from "./components/InvalidTokenListItem";
-import ProjectListItem from "./components/ProjectListItem";
-import TimeEntriesWithUniqueProjectAndDescriptionSection from "./components/TimeEntriesWithUniqueProjectAndDescriptionSection";
+import {
+  RunningTimeEntry,
+  CreateTrackListItem,
+  InvalidTokenListItem,
+  ProjectListItem,
+  TimeEntriesWithUniqueProjectAndDescriptionSection,
+} from "./components/toggl";
+
 import { AppContextProvider, useAppContext } from "./context";
 
 dayjs.extend(duration);

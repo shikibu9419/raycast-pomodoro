@@ -1,6 +1,8 @@
 import { List } from "@raycast/api";
-import { ProjectGroup } from "../context/ProjectGroup";
+
 import ProjectListItem from "./ProjectListItem";
+
+import { ProjectGroup } from "../../context/ProjectGroup";
 
 export default function ProjectGroupSection({ group }: { group: ProjectGroup }) {
   return (
