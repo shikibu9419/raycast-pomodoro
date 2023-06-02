@@ -1,5 +1,5 @@
 import { Suspense, useCallback, useState } from "react";
-import { Icon, List, Toast, showToast } from "@raycast/api";
+import { List, Toast, showToast } from "@raycast/api";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import CreateTrackListItem from "./components/CreateTrackListItem";
 import EmptyTask from "./components/EmptyTask";
 import RunningTimeEntry from "./components/RunningTimeEntry";
 import TaskListSection from "./components/TaskListSection";
+import InvalidTokenListItem from "./components/InvalidTokenListItem";
 
 import { AppContextProvider, useAppContext } from "./context";
 import { useTimeEntry } from "./hooks/useTimeEntry";
@@ -41,15 +42,8 @@ function RemindersList() {
 
   return (
     <List isLoading={isLoading} searchText={inputText} onSearchTextChange={handleInputTextChange} enableFiltering>
-      {isValidToken ? (
-        !isLoading && runningTimeEntry && <RunningTimeEntry runningTimeEntry={runningTimeEntry} />
-      ) : (
-        <List.Item
-          icon={Icon.ExclamationMark}
-          title="Invalid API Key Detected"
-          accessories={[{ text: `Go to Extensions → Toggl Track` }]}
-        />
-      )}
+      {!isValidToken && <InvalidTokenListItem />}
+      {isValidToken && !isLoading && runningTimeEntry && <RunningTimeEntry runningTimeEntry={runningTimeEntry} />}
       {data && <TaskListSection tasks={data} />}
       {isValidToken && !isLoading && (
         <List.Section title="Toggl">
