@@ -6,6 +6,7 @@ import { storage } from "../storage";
 import toggl from "../toggl";
 import { useAppContext } from "../context";
 import { updateReminder } from "../reminders/api";
+import { pause } from "../youtubemusic";
 
 function RunningTimeEntry({ runningTimeEntry }: { runningTimeEntry: TimeEntry }) {
   const currentTime = useCurrentTime();
@@ -22,6 +23,8 @@ function RunningTimeEntry({ runningTimeEntry }: { runningTimeEntry: TimeEntry })
         await updateReminder(runningTaskId, { completed: true });
         LocalStorage.removeItem("runningTaskId");
       }
+      pause();
+
       await showToast(Toast.Style.Success, `Stopped time entry`);
     } catch (e) {
       await showToast(Toast.Style.Failure, "Failed to stop time entry");

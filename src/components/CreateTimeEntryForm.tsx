@@ -14,6 +14,7 @@ import { storage } from "../storage";
 import { Project } from "../toggl/types";
 import { useAppContext } from "../context";
 import { useMemo, useState } from "react";
+import { play } from "../youtubemusic";
 
 function CreateTimeEntryForm({
   project,
@@ -32,15 +33,18 @@ function CreateTimeEntryForm({
 
   async function handleSubmit(values: { description: string }) {
     try {
+      await showToast(Toast.Style.Animated, "Starting time entry...");
+
       await toggl.createTimeEntry({
         projectId: selectedProject?.id,
         description: values.description,
         tags: selectedTags,
         billable,
       });
-      if (taskId) LocalStorage.setItem("runningTaskId", taskId);
-      await showToast(Toast.Style.Animated, "Starting time entry...");
       await storage.runningTimeEntry.refresh();
+      if (taskId) LocalStorage.setItem("runningTaskId", taskId);
+      play();
+
       await showToast(Toast.Style.Success, "Started time entry");
       navigation.pop();
       await clearSearchBar();

@@ -7,7 +7,13 @@ import { AppContextProvider } from "../context";
 import { Reminder } from "../reminders/model";
 
 const isToday = (date: Date) => {
-  return date && date.getDate() === 1 && date.getMonth() === 5 && date.getFullYear() === 2023;
+  const today = new Date();
+  return (
+    date &&
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
 };
 
 function TaskListItem({ task }: { task: Reminder }) {
