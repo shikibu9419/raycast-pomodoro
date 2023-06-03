@@ -1,29 +1,11 @@
-import { useCallback, useMemo } from "react";
-import { List, Icon, Color, ActionPanel, Action, showToast, Toast } from "@raycast/api";
+import { List, Icon, Color, ActionPanel, Action } from "@raycast/api";
 
 import CreateTimeEntryForm from "../toggl/CreateTimeEntryForm";
 
 import { AppContextProvider } from "../../context";
 import { Reminder } from "../../reminders/model";
-import { updateReminder } from "../../reminders/api";
 
-const isToday = (date: Date) => {
-  const today = new Date();
-  return (
-    date &&
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
-  );
-};
-
-function TaskListItem({
-  task,
-  toggleTaskCompleted,
-}: {
-  task: Reminder;
-  toggleTaskCompleted: (task: Reminder) => void;
-}) {
+function TaskListItem({ task, onCompleteTask }: { task: Reminder; onCompleteTask: (task: Reminder) => void }) {
   return (
     <List.Item
       key={task.id}
@@ -45,7 +27,7 @@ function TaskListItem({
             title="Complete task"
             icon={{ source: Icon.Checkmark }}
             shortcut={{ modifiers: ["cmd"], key: "return" }}
-            onAction={() => toggleTaskCompleted(task)}
+            onAction={() => onCompleteTask(task)}
           />
         </ActionPanel>
       }
@@ -53,32 +35,20 @@ function TaskListItem({
   );
 }
 
-export default function TaskListSection({ tasks, onRefetch }: { tasks: Reminder[]; onRefetch: () => void }) {
-  const toggleTaskCompleted = useCallback(async (task: Reminder) => {
-    const rst = await updateReminder(task.id, { completed: !task.completed });
-    if (rst.error) {
-      await showToast(Toast.Style.Failure, "Failed to update task");
-      return;
-    }
-
-    onRefetch();
-
-    await showToast(Toast.Style.Success, "Task updated!");
-  }, []);
-
-  const todayTasks = useMemo(() => tasks.filter((task) => isToday(task.dueDate)), [tasks]);
-  const inboxTasks = useMemo(() => tasks.filter((task) => !task.dueDate), [tasks]);
-
+export default function TaskListSection({
+  title,
+  tasks,
+  onCompleteTask,
+}: {
+  title: string;
+  tasks: Reminder[];
+  onCompleteTask: (task: Reminder) => void;
+}) {
   return (
     <>
-      <List.Section title="Today's Tasks">
-        {todayTasks.map((task) => (
-          <TaskListItem key={task.id} task={task} toggleTaskCompleted={toggleTaskCompleted} />
-        ))}
-      </List.Section>
-      <List.Section title="Inbox Tasks">
-        {inboxTasks.map((task) => (
-          <TaskListItem key={task.id} task={task} toggleTaskCompleted={toggleTaskCompleted} />
+      <List.Section title={`${title} (${tasks.length} Tasks)`}>
+        {tasks.map((task) => (
+          <TaskListItem key={task.id} task={task} onCompleteTask={onCompleteTask} />
         ))}
       </List.Section>
     </>
