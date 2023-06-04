@@ -1,5 +1,7 @@
+import { showToast, Toast } from "@raycast/api";
 import { runAppleScript } from "run-applescript";
-import { Application, getPreferenceValues, showToast, Toast } from "@raycast/api";
+
+import { preferences } from "../preferences";
 
 // Extension should work with any Chromium or Firefox (not sure) based browser, but it impossible to check every such browser.
 // So i cannot confirm that extension will work with any else browser except that listed below.
@@ -18,7 +20,7 @@ function runJS(browser: SupportedBrowsers | string, code: string): string {
 }
 
 export async function runJSInYouTubeMusicTab(code: string) {
-  const browser = getPreferenceValues<{ browser: Application }>().browser;
+  const { browser } = preferences;
 
   try {
     const jsResult = await runAppleScript(`
