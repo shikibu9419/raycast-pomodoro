@@ -1,10 +1,42 @@
+import { execa } from "execa";
+import { join } from "path";
+import { dateToString } from "../lib";
 import { ReminderList, Reminder, ReminderParams } from "./model";
-import { dateToString, execCommand, parseReminderDate } from "./utils";
 
 interface Response<T = null> {
   data: T;
   error: string;
 }
+
+type ReminderCommand =
+  | "createList"
+  | "createReminder"
+  | "deleteReminder"
+  | "getList"
+  | "getLists"
+  | "getReminder"
+  | "getReminders"
+  | "updateReminder";
+
+export async function execCommand<T>(command: ReminderCommand, args: string[] = []): Promise<T> {
+  console.log("Exec Command:", join("/Users/shikibu/.config/raycast/bin", command), args);
+  // TODO: change
+  // const { stdout } = await execa(join(environment.supportPath, command), args);
+  const { stdout } = await execa(join("/Users/shikibu/.config/raycast/bin", command), args);
+
+  console.log(">", stdout);
+
+  return JSON.parse(stdout);
+}
+
+/**
+ * Takes an object and return an equivalent object with string dates converted to Date objects
+ */
+export const parseReminderDate = (reminder: Reminder): Reminder => ({
+  ...reminder,
+  creationDate: reminder.creationDate && new Date(reminder.creationDate),
+  dueDate: reminder.dueDate && new Date(reminder.dueDate),
+});
 
 export async function getReminderLists(): Promise<ReminderList[]> {
   const res = await execCommand<Response<ReminderList[]>>("getLists");
@@ -23,7 +55,10 @@ export async function getReminders(listName: string): Promise<Reminder[]> {
 }
 
 export function updateReminder(id: string, params: ReminderParams): Promise<Response> {
-  return execCommand<Response>("updateReminder", [id, JSON.stringify(params)]);
+  return execCommand<Response>("updateReminder", [
+    id,
+    JSON.stringify({ ...params, ...(params.dueDate ? { dueDate: dateToString(params.dueDate) } : {}) }),
+  ]);
 }
 
 export function deleteReminder(id: string): Promise<Response> {

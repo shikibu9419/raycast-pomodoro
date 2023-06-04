@@ -24,3 +24,18 @@ export const isIncoming = (target?: Date, base = new Date(), ignoreSameday = fal
 // expired
 export const isExpired = (target?: Date, base = new Date()) =>
   target && !(isSameDate(target, base) && isAllDay(target)) && target.getTime() - base.getTime() < 0;
+
+// YYYY-MM-DDTHH:mm:ssZ (without milliseconds)
+// TODO: Use dayjs?
+export const dateToString = (date: Date): string => date.toISOString().slice(0, -5) + "+09:00";
+
+export const getToday = () => {
+  const now = new Date();
+  now.setSeconds(0);
+  now.setMinutes(0);
+  now.setHours(0);
+
+  return now;
+};
+
+export const getTomorrow = (date?: Date) => new Date((date || getToday()).getTime() + 1000 * 60 * 60 * 24);

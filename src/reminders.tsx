@@ -28,8 +28,8 @@ function RemindersList() {
   }, []);
   const getRemindersWrapper = useCallback(() => getReminders(preferences.defaultListName), []);
 
-  const toggleTaskCompleted = useCallback(async (task: Reminder) => {
-    const rst = await updateReminder(task.id, { completed: !task.completed });
+  const updateTask = useCallback(async (task: Reminder) => {
+    const rst = await updateReminder(task.id, task);
     if (rst.error) {
       await showToast(Toast.Style.Failure, "Failed to update task");
       return;
@@ -59,10 +59,10 @@ function RemindersList() {
     <List isLoading={isLoading} searchText={inputText} onSearchTextChange={handleInputTextChange} enableFiltering>
       {!isValidToken && <InvalidTokenListItem />}
       {isValidToken && !isLoading && runningTimeEntry && <RunningTimeEntry runningTimeEntry={runningTimeEntry} />}
-      {todayTasks && <TaskListSection title="Today" tasks={todayTasks} onCompleteTask={toggleTaskCompleted} />}
-      {inboxTasks && <TaskListSection title="Inbox" tasks={inboxTasks} onCompleteTask={toggleTaskCompleted} />}
-      {incomingTasks && <TaskListSection title="Incoming" tasks={incomingTasks} onCompleteTask={toggleTaskCompleted} />}
-      {expiredTasks && <TaskListSection title="Expired" tasks={expiredTasks} onCompleteTask={toggleTaskCompleted} />}
+      {todayTasks && <TaskListSection title="Today" tasks={todayTasks} onUpdateTask={updateTask} />}
+      {inboxTasks && <TaskListSection title="Inbox" tasks={inboxTasks} onUpdateTask={updateTask} />}
+      {incomingTasks && <TaskListSection title="Incoming" tasks={incomingTasks} onUpdateTask={updateTask} />}
+      {expiredTasks && <TaskListSection title="Expired" tasks={expiredTasks} onUpdateTask={updateTask} />}
       {isValidToken && !isLoading && (
         <List.Section title="Toggl">
           <CreateTrackListItem />
