@@ -30,8 +30,8 @@ func createReminder(in eventStore: EKEventStore, listName: String, title: String
             "notes": reminder.notes ?? "",
             "id": reminder.calendarItemIdentifier,
             "completed": reminder.isCompleted,
-            "creationDate": stringFromDate(reminder.creationDate),
-            "dueDate": stringFromDate(reminder.dueDateComponents?.date),
+            "creationDate": dateToString(reminder.creationDate),
+            "dueDate": dateToString(reminder.dueDateComponents?.date),
             "priority": reminder.priority
         ]
         let data = try JSONSerialization.data(withJSONObject: reminderDict)

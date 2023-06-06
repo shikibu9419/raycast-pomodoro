@@ -27,19 +27,21 @@ func updateReminder(in eventStore: EKEventStore, reminderId: String, reminderJso
             if let priority = reminderJson["priority"] as? Int {
                 reminder.priority = priority
             }
-            if let dueDate = reminderJson["dueDate"] as? String, let newDueDate = dateFromString(dueDate) {
+            if let dueDate = reminderJson["dueDate"] as? String, let newDueDate = stringToDate(dueDate) {
                 reminder.dueDateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: newDueDate)
             }
             do {
                 try eventStore.save(reminder, commit: true)
                 printOk()
+                return
             } catch {
                 printError("Failed to update reminder: \(error.localizedDescription)")
+                return
             }
-        } else {
-            printError("Could not find reminder with ID \(reminderId)")
         }
     }
+
+    printError("Could not find reminder with ID \(reminderId)")
 }
 
 // Command line arguments handling

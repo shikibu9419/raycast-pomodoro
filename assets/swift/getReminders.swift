@@ -62,8 +62,8 @@ func getReminders(in listName: String, from eventStore: EKEventStore, completed:
                 "notes": reminder.notes ?? "",
                 "id": reminder.calendarItemIdentifier,
                 "completed": reminder.isCompleted,
-                "creationDate": stringFromDate(reminder.creationDate),
-                "dueDate": stringFromDate(reminder.dueDateComponents?.date),
+                "creationDate": dateToString(reminder.creationDate),
+                "dueDate": dateToString(reminder.dueDateComponents?.date),
                 "priority": reminder.priority
             ]
         }
@@ -89,6 +89,6 @@ if args.count < 2 || args.count > 5 {
 
 let listName     = args[1]
 let completed    = args.count >= 3 ? args[2].lowercased() == "true" : nil
-let startDueDate = args.count >= 4 ? dateFromString(args[3]) : nil
-let endDueDate   = args.count >= 5 ? dateFromString(args[4]) : nil
+let startDueDate = args.count >= 4 ? stringToDate(args[3]) : nil
+let endDueDate   = args.count >= 5 ? stringToDate(args[4]) : nil
 getReminders(in: listName, from: EKEventStore(), completed: completed, startDueDate: startDueDate, endDueDate: endDueDate)
