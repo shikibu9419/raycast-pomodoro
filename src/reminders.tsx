@@ -9,7 +9,6 @@ import { InvalidTokenListItem, RunningTimeEntry, CreateTrackListItem } from "./c
 import { AppContextProvider, useAppContext } from "./context";
 import { useTimeEntry } from "./hooks/useTimeEntry";
 import { isSameDate, isIncoming, isExpired, getToday } from "./lib";
-import { preferences } from "./preferences";
 import { createReminder, getReminders, updateReminder } from "./reminders/api";
 import { Reminder } from "./reminders/model";
 
@@ -23,7 +22,7 @@ function RemindersList() {
   const handleInputTextChange = useCallback((value: string) => {
     setInputText(value);
   }, []);
-  const getRemindersWrapper = useCallback(() => getReminders(preferences.defaultListName), []);
+  const getRemindersWrapper = useCallback(() => getReminders(), []);
 
   const updateTask = useCallback(async (task: Reminder) => {
     const rst = await updateReminder(task.id, task);

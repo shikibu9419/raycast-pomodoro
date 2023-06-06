@@ -32,14 +32,6 @@
       "description": "The API token for your Toggl account."
     },
     {
-      "name": "defaultListName",
-      "type": "textfield",
-      "required": true,
-      "title": "Reminder List Name",
-      "placeholder": "Default list name to add",
-      "description": "Default list name to add your tasks to"
-    },
-    {
       "name": "browser",
       "title": "Browser where YouTube Music opened.",
       "description": "Script will control the YouTube Music tab in this browser.",

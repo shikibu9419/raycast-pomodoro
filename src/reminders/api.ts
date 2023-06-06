@@ -48,8 +48,11 @@ export async function getReminderLists(): Promise<ReminderList[]> {
   return res.data;
 }
 
-export async function getReminders(listName: string): Promise<Reminder[]> {
-  const res = await execCommand<Response<Reminder[]>>("getReminders", [listName, "false"]);
+export async function getReminders(): Promise<Reminder[]> {
+  const params = {
+    completed: false,
+  };
+  const res = await execCommand<Response<Reminder[]>>("getReminders", [JSON.stringify(params)]);
 
   if (res.error) throw new Error(res.error);
 
