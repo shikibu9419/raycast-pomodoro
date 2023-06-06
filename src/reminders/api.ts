@@ -1,7 +1,9 @@
+import dayjs from "dayjs";
 import { execa } from "execa";
 import { join } from "path";
-import { dateToString } from "../lib";
+
 import { ReminderList, Reminder, ReminderParams } from "./model";
+import { dateToString } from "../lib";
 
 interface Response<T = null> {
   data: T;
@@ -34,8 +36,8 @@ export async function execCommand<T>(command: ReminderCommand, args: string[] = 
  */
 export const parseReminderDate = (reminder: Reminder): Reminder => ({
   ...reminder,
-  creationDate: reminder.creationDate && new Date(reminder.creationDate),
-  dueDate: reminder.dueDate && new Date(reminder.dueDate),
+  creationDate: reminder.creationDate && dayjs(reminder.creationDate).tz(),
+  dueDate: reminder.dueDate && dayjs(reminder.dueDate).tz(),
 });
 
 export async function getReminderLists(): Promise<ReminderList[]> {

@@ -1,8 +1,5 @@
 import { List } from "@raycast/api";
 
-import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
-
 import {
   RunningTimeEntry,
   CreateTrackListItem,
@@ -12,8 +9,6 @@ import {
 } from "./components/toggl";
 
 import { AppContextProvider, useAppContext } from "./context";
-
-dayjs.extend(duration);
 
 function ListView() {
   const { isLoading, isValidToken, projectGroups, runningTimeEntry } = useAppContext();

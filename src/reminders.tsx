@@ -1,20 +1,17 @@
 import { Suspense, useCallback, useMemo, useState } from "react";
 import { List, Toast, showToast } from "@raycast/api";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+
 import dayjs from "dayjs";
-import duration from "dayjs/plugin/duration";
 
 import { EmptyTask, TaskListSection } from "./components/reminders";
 import { InvalidTokenListItem, RunningTimeEntry, CreateTrackListItem } from "./components/toggl";
-
 import { AppContextProvider, useAppContext } from "./context";
 import { useTimeEntry } from "./hooks/useTimeEntry";
+import { isSameDate, isIncoming, isExpired, getToday } from "./lib";
 import { preferences } from "./preferences";
 import { createReminder, getReminders, updateReminder } from "./reminders/api";
 import { Reminder } from "./reminders/model";
-import { isSameDate, isIncoming, isExpired } from "./lib";
-
-dayjs.extend(duration);
 
 const queryClient = new QueryClient();
 
@@ -41,7 +38,7 @@ function RemindersList() {
   }, []);
 
   const createTask = useCallback(async (listName: string, title: string, tracked: boolean) => {
-    const { data } = await createReminder(listName, { title, dueDate: new Date() });
+    const { data } = await createReminder(listName, { title, dueDate: dayjs() });
     if (tracked) createTimeEntry(title, data.id);
 
     await showToast(Toast.Style.Success, "Task created!");
@@ -49,7 +46,7 @@ function RemindersList() {
 
   const { data, refetch } = useQuery<Reminder[]>(["reminders"], getRemindersWrapper);
 
-  const today = useMemo(() => new Date(), []);
+  const today = useMemo(() => getToday(), []);
   const todayTasks = useMemo(() => data?.filter((task) => isSameDate(task.dueDate, today)), [data]);
   const inboxTasks = useMemo(() => data?.filter((task) => !task.dueDate), [data]);
   const incomingTasks = useMemo(() => data?.filter((task) => isIncoming(task.dueDate, today, true)), [data]);
@@ -65,6 +62,11 @@ function RemindersList() {
       {expiredTasks && <TaskListSection title="Expired" tasks={expiredTasks} onUpdateTask={updateTask} />}
       {isValidToken && !isLoading && (
         <List.Section title="Toggl">
+          <CreateTrackListItem />
+        </List.Section>
+      )}
+      {isValidToken && !isLoading && (
+        <List.Section title="Resume">
           <CreateTrackListItem />
         </List.Section>
       )}

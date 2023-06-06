@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export interface ReminderList {
   name: string;
   id: string;
@@ -8,8 +10,8 @@ export interface Reminder {
   notes: string;
   id: string;
   completed: boolean;
-  creationDate: Date;
-  dueDate: Date;
+  creationDate: Dayjs;
+  dueDate: Dayjs;
   priority: number;
 }
 

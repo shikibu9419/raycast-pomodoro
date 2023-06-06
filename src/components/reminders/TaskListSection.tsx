@@ -23,7 +23,7 @@ function TaskListItem({
       key={task.id}
       title={task.title}
       icon={{ source: Icon.Circle, tintColor: Color.Orange }}
-      accessories={[{ text: task.notes }, ...(task.dueDate ? [{ date: task.dueDate }] : [])]}
+      accessories={[{ text: task.notes }, ...(task.dueDate ? [{ date: task.dueDate.toDate() }] : [])]}
       actions={
         <ActionPanel>
           <Action.Push
@@ -71,12 +71,8 @@ export default function TaskListSection({
   onUpdateTask: (task: Reminder) => void;
 }) {
   const postPoneToTommorow = useCallback((task: Reminder) => {
-    const today = getToday();
-    console.log(today);
-    if (!task.dueDate) task.dueDate = today;
-    task.dueDate.setDate(today.getDate() + 1);
-
-    onUpdateTask(task);
+    const newDay = getToday();
+    onUpdateTask({ ...task, dueDate: newDay.date(newDay.date() + 1) });
   }, []);
 
   return (
