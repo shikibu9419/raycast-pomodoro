@@ -2,14 +2,21 @@ import EventKit
 import Foundation
 import Dispatch
 
-func getReminders(in listName: String, from eventStore: EKEventStore, completed: Bool?, startDueDate: Date?, endDueDate: Date?) {
+func getReminders(in eventStore: EKEventStore, with params: [String: Any]) {
     let calendars = eventStore.calendars(for: .reminder)
-    guard let targetCalendar = calendars.first(where: { $0.title == listName }) else {
-        printError("The specified list does not exist")
-        return
+    var targetCalendars: [EKCalendar] = []
+
+    if let listName = params["listName"] as? String, !listName.isEmpty {
+        guard let targetCalendar = calendars.first(where: { $0.title == listName }) else {
+            printError("The specified list does not exist")
+            return
+        }
+        targetCalendars.append(targetCalendar)
+    } else {
+        targetCalendars = calendars
     }
 
-    let predicate = eventStore.predicateForReminders(in: [targetCalendar])
+    let predicate = eventStore.predicateForReminders(in: targetCalendars)
 
     let group = DispatchGroup()
     group.enter()
@@ -24,19 +31,19 @@ func getReminders(in listName: String, from eventStore: EKEventStore, completed:
 
         let filteredReminders = reminders.filter { reminder in
             if let dueDate = reminder.dueDateComponents?.date {
-                if let startDueDate = startDueDate {
+                if let startDueDate = params["startDueDate"] as? Date {
                     if dueDate < startDueDate {
                         return false
                     }
                 }
-                if let endDueDate = endDueDate {
+                if let endDueDate = params["endDueDate"] as? Date {
                     if dueDate > endDueDate {
                         return false
                     }
                 }
             }
 
-            if let completed = completed {
+            if let completed = params["completed"] as? Bool {
                 return reminder.isCompleted == completed
             }
 
@@ -82,13 +89,9 @@ func getReminders(in listName: String, from eventStore: EKEventStore, completed:
 // Command line arguments handling
 let args = CommandLine.arguments
 
-if args.count < 2 || args.count > 5 {
-    printError("Usage: ./<program> <listName> <completed> <startDueDate> <endDueDate>")
+if args.count > 2 {
+    printError("Usage: ./<program> <parameter json>")
     exit(1)
 }
 
-let listName     = args[1]
-let completed    = args.count >= 3 ? args[2].lowercased() == "true" : nil
-let startDueDate = args.count >= 4 ? stringToDate(args[3]) : nil
-let endDueDate   = args.count >= 5 ? stringToDate(args[4]) : nil
-getReminders(in: listName, from: EKEventStore(), completed: completed, startDueDate: startDueDate, endDueDate: endDueDate)
+getReminders(in: EKEventStore(), with: parseJson(args[1]))

@@ -53,11 +53,6 @@ if args.count != 3 {
 }
 
 let reminderId = args[1]
-let reminderJsonData = args[2].data(using: .utf8)!
-
-guard let reminderJson = try? JSONSerialization.jsonObject(with: reminderJsonData, options: []) as? [String: Any] else {
-    printError("Invalid JSON format.")
-    exit(1)
-}
+let reminderJson = parseJson(args[2])
 
 updateReminder(in: EKEventStore(), reminderId: reminderId, reminderJson: reminderJson)

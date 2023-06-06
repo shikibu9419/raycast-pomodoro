@@ -10,6 +10,16 @@ func dateToString(_ date: Date?) -> String {
     return dateFormatter.string(from: date)
 }
 
+func parseJson(_ jsonString: String) -> [String: Any] {
+    let jsonData = jsonString.data(using: .utf8)!
+    guard let json = try? JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else {
+        printError("Invalid JSON format.")
+        exit(1)
+    }
+
+    return json;
+}
+
 // JSONデータをprint
 func printData(_ data: String) {
       print("{\"data\": \(data)}")
