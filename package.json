@@ -38,6 +38,13 @@
       "type": "appPicker",
       "default": "Chrome",
       "required": true
+    },
+    {
+      "name": "extensionPath",
+      "title": "Path to the extension folder.",
+      "description": "To call the Reminders API using bin/ scripts.",
+      "type": "directory",
+      "required": true
     }
   ],
   "keywords": [],

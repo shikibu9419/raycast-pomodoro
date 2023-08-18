@@ -4,6 +4,7 @@ import { join } from "path";
 
 import { ReminderList, Reminder, ReminderParams } from "./model";
 import { dateToString } from "../lib";
+import { preferences } from "../preferences";
 
 interface Response<T = null> {
   data: T;
@@ -21,10 +22,9 @@ type ReminderCommand =
   | "updateReminder";
 
 export async function execCommand<T>(command: ReminderCommand, args: string[] = []): Promise<T> {
-  console.log("Exec Command:", join("/Users/shikibu/.config/raycast/bin", command), args);
-  // TODO: change
-  // const { stdout } = await execa(join(environment.supportPath, command), args);
-  const { stdout } = await execa(join("/Users/shikibu/.config/raycast/bin", command), args);
+  const commandPath = join(`${preferences.extensionPath}/bin`, command);
+  console.log("Exec Command:", commandPath, args);
+  const { stdout } = await execa(commandPath, args);
 
   console.log(">", stdout);
 
